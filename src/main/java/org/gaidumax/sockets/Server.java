@@ -27,13 +27,15 @@ public class Server extends Thread {
         while (true) {
             try {
                 Socket socket = serverSocket.accept();
-                Client client = clientService.findByAddress(socket.getInetAddress().toString());
+                Client client = clientService.findByPort(socket.getLocalPort());
                 if (Objects.isNull(client)) {
-                    client = new Client(socket.getInetAddress().toString(), socket.getPort());
+                    client = new Client(socket.getPort());
                     clientService.save(client);
-                    new ClientSocket(client, socket).start();
+                    System.out.println("New client has been registered:\t" + client);
+                } else {
+                    System.out.println("Old client has been connected:\t" + client);
                 }
-                System.out.println(client);
+                new ClientSocket(client, socket).start();
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

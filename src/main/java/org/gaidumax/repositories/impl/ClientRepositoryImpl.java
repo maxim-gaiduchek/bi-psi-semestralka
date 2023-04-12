@@ -11,8 +11,8 @@ public class ClientRepositoryImpl implements ClientRepository {
     private final List<Client> clients = new ArrayList<>();
 
     @Override
-    public Client findByAddress(String address) {
-        return clients.stream().filter(client -> client.getAddress().equals(address))
+    public Client findByPort(int port) {
+        return clients.stream().filter(client -> client.getPort() == port)
                 .findFirst().orElse(null);
     }
 

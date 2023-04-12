@@ -4,7 +4,7 @@ import org.gaidumax.model.Client;
 
 public interface ClientService {
 
-    Client findByAddress(String address);
+    Client findByPort(int port);
 
     Client save(Client client);
 

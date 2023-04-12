@@ -1,34 +1,37 @@
 package org.gaidumax.model;
 
-import java.util.Objects;
-
 public class Client {
-    private String address;
-    private int port;
 
-    public Client(String address, int port) {
-        this.address = address;
+    private final int port;
+    private String username;
+    private boolean authenticated = false;
+
+    public Client(int port) {
         this.port = port;
     }
 
     // getters
 
-    public String getAddress() {
-        return address;
-    }
-
     public int getPort() {
         return port;
     }
 
-    // setters
-
-    public void setAddress(String address) {
-        this.address = address;
+    public String getUsername() {
+        return username;
     }
 
-    public void setPort(int port) {
-        this.port = port;
+    public boolean isAuthenticated() {
+        return authenticated;
+    }
+
+    // setters
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setAuthenticated(boolean authenticated) {
+        this.authenticated = authenticated;
     }
 
     // data
@@ -37,20 +40,23 @@ public class Client {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+
         Client client = (Client) o;
-        return port == client.port && address.equals(client.address);
+
+        if (port != client.port) return false;
+        return authenticated == client.authenticated;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(address, port);
+        return port;
     }
 
     @Override
     public String toString() {
         return "Client{" +
-                "address='" + address + '\'' +
-                ", port=" + port +
+                "port=" + port +
+                ", authenticated=" + authenticated +
                 '}';
     }
 }

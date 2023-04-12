@@ -1,0 +1,16 @@
+package org.gaidumax.sockets;
+
+interface ServerCommands {
+
+    String SERVER_MOVE = "102 MOVE\7\10";
+    String SERVER_TURN_LEFT = "103 TURN LEFT\7\10";
+    String SERVER_TURN_RIGHT = "104 TURN RIGHT\7\10";
+    String SERVER_PICK_UP = "105 GET MESSAGE\7\10";
+    String SERVER_LOGOUT = "106 LOGOUT\7\10";
+    String SERVER_KEY_REQUEST = "107 KEY REQUEST\7\10";
+    String SERVER_OK = "200 OK\7\10";
+    String SERVER_LOGIN_FAILED = "300 LOGIN FAILED\7\10";
+    String SERVER_SYNTAX_ERROR = "301 SYNTAX ERROR\7\10";
+    String SERVER_LOGIC_ERROR = "302 LOGIC ERROR\7\10";
+    String SERVER_KEY_OUT_OF_RANGE_ERROR = "303 KEY OUT OF RANGE\7\10";
+}

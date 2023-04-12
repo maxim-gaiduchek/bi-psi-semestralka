@@ -6,24 +6,24 @@ import org.gaidumax.services.interfaces.ClientService;
 
 public class ClientServiceImpl implements ClientService {
 
-    private final ClientRepository repository;
+    private final ClientRepository clientRepository;
 
-    public ClientServiceImpl(ClientRepository repository) {
-        this.repository = repository;
+    public ClientServiceImpl(ClientRepository clientRepository) {
+        this.clientRepository = clientRepository;
     }
 
     @Override
-    public Client findByAddress(String address) {
-        return repository.findByAddress(address);
+    public Client findByPort(int port) {
+        return clientRepository.findByPort(port);
     }
 
     @Override
     public Client save(Client client) {
-        return repository.save(client);
+        return clientRepository.save(client);
     }
 
     @Override
     public void delete(Client client) {
-        repository.delete(client);
+        clientRepository.delete(client);
     }
 }
