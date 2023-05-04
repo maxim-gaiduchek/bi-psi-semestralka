@@ -2,7 +2,7 @@ package org.gaidumax.services.interfaces;
 
 import org.gaidumax.model.Client;
 
-public interface ClientService {
+public interface ClientStorageService {
 
     Client findByPort(int port);
 

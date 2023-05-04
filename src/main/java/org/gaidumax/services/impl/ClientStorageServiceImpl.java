@@ -2,13 +2,13 @@ package org.gaidumax.services.impl;
 
 import org.gaidumax.model.Client;
 import org.gaidumax.repositories.interfaces.ClientRepository;
-import org.gaidumax.services.interfaces.ClientService;
+import org.gaidumax.services.interfaces.ClientStorageService;
 
-public class ClientServiceImpl implements ClientService {
+public class ClientStorageServiceImpl implements ClientStorageService {
 
     private final ClientRepository clientRepository;
 
-    public ClientServiceImpl(ClientRepository clientRepository) {
+    public ClientStorageServiceImpl(ClientRepository clientRepository) {
         this.clientRepository = clientRepository;
     }
 

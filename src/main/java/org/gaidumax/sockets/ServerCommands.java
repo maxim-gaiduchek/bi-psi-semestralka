@@ -1,6 +1,6 @@
 package org.gaidumax.sockets;
 
-interface ServerCommands {
+public interface ServerCommands {
 
     String SERVER_MOVE = "102 MOVE\7\10";
     String SERVER_TURN_LEFT = "103 TURN LEFT\7\10";
