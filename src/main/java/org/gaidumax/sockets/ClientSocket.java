@@ -45,7 +45,7 @@ public class ClientSocket extends Thread {
         try {
             while (socket.isConnected()) {
                 String request = ioService.read(in);
-                if (rechargingService.isRecharging(request)) {
+                if (rechargingService.isRechargingCommand(request)) {
                     if (rechargingService.recharge(in, out)) {
                         continue;
                     } else {

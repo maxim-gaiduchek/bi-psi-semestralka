@@ -6,7 +6,7 @@ import java.io.IOException;
 
 public interface RechargingService {
 
-    boolean isRecharging(String request);
+    boolean isRechargingCommand(String request);
 
     boolean recharge(BufferedReader in, BufferedWriter out) throws IOException;
 }

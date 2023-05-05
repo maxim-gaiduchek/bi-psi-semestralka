@@ -18,7 +18,7 @@ public class RechargingServiceImpl implements RechargingService {
     private final IOService ioService = new IOServiceImpl();
 
     @Override
-    public boolean isRecharging(String request) {
+    public boolean isRechargingCommand(String request) {
         return CLIENT_RECHARGING.equals(request);
     }
 

@@ -58,19 +58,12 @@ public class Client {
 
         Client client = (Client) o;
 
-        if (port != client.port) return false;
-        if (authKey != client.authKey) return false;
-        if (!Objects.equals(username, client.username)) return false;
-        return authStatus == client.authStatus;
+        return Objects.equals(username, client.username);
     }
 
     @Override
     public int hashCode() {
-        int result = port;
-        result = 31 * result + (username != null ? username.hashCode() : 0);
-        result = 31 * result + authStatus.hashCode();
-        result = 31 * result + authKey;
-        return result;
+        return username != null ? username.hashCode() : 0;
     }
 
     @Override
