@@ -1,10 +1,13 @@
 package org.gaidumax.model;
 
+import java.util.Objects;
+
 public class Client {
 
     private final int port;
     private String username;
-    private boolean authenticated = false;
+    private ClientAuthStatus authStatus = ClientAuthStatus.IS_SENDING_USERNAME;
+    private int authKey = -1;
 
     public Client(int port) {
         this.port = port;
@@ -21,7 +24,15 @@ public class Client {
     }
 
     public boolean isAuthenticated() {
-        return authenticated;
+        return authStatus == ClientAuthStatus.AUTHENTICATED;
+    }
+
+    public ClientAuthStatus getAuthStatus() {
+        return authStatus;
+    }
+
+    public int getAuthKey() {
+        return authKey;
     }
 
     // setters
@@ -30,8 +41,12 @@ public class Client {
         this.username = username;
     }
 
-    public void setAuthenticated(boolean authenticated) {
-        this.authenticated = authenticated;
+    public void setAuthStatus(ClientAuthStatus authStatus) {
+        this.authStatus = authStatus;
+    }
+
+    public void setAuthKey(int authKey) {
+        this.authKey = authKey;
     }
 
     // data
@@ -44,19 +59,27 @@ public class Client {
         Client client = (Client) o;
 
         if (port != client.port) return false;
-        return authenticated == client.authenticated;
+        if (authKey != client.authKey) return false;
+        if (!Objects.equals(username, client.username)) return false;
+        return authStatus == client.authStatus;
     }
 
     @Override
     public int hashCode() {
-        return port;
+        int result = port;
+        result = 31 * result + (username != null ? username.hashCode() : 0);
+        result = 31 * result + authStatus.hashCode();
+        result = 31 * result + authKey;
+        return result;
     }
 
     @Override
     public String toString() {
         return "Client{" +
                 "port=" + port +
-                ", authenticated=" + authenticated +
+                ", username='" + username + '\'' +
+                ", authStatus=" + authStatus +
+                ", authKey=" + authKey +
                 '}';
     }
 }
