@@ -29,31 +29,38 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public boolean authenticate(Client client, BufferedWriter out, String request) throws IOException {
-        switch (client.getAuthStatus()) {
-            case IS_SENDING_USERNAME -> {
-                if (!parseUsername(client, out, request)) {
+        try {
+            switch (client.getAuthStatus()) {
+                case IS_SENDING_USERNAME -> {
+                    if (!parseUsername(client, out, request)) {
+                        return false;
+                    }
+                }
+                case IS_SENDING_KEY -> {
+                    if (!parseKey(client, out, request)) {
+                        return false;
+                    }
+                }
+                case IS_SENDING_HASH -> {
+                    if (!parseHash(client, out, request)) {
+                        return false;
+                    }
+                }
+                default -> {
+                    ioService.send(out, SERVER_LOGIC_ERROR);
                     return false;
                 }
             }
-            case IS_SENDING_KEY -> {
-                if (!parseKey(client, out, request)) {
-                    return false;
-                }
-            }
-            case IS_SENDING_HASH -> {
-                if (!parseHash(client, out, request)) {
-                    return false;
-                }
-            }
-            default -> {
-                ioService.send(out, SERVER_LOGIC_ERROR);
-                return false;
-            }
+        } catch (NumberFormatException e) {
+            ioService.send(out, SERVER_SYNTAX_ERROR);
+            logger.log("Authentication with port=" + client.getPort() + " has thrown an error: invalid integer");
+            return false;
         }
         return true;
     }
 
-    private boolean parseUsername(Client client, BufferedWriter out, String request) throws IOException {
+    private boolean parseUsername(Client client, BufferedWriter out, String request)
+            throws IOException, NumberFormatException {
         logger.log("Username by port=" + client.getPort() + ":\t" + request);
         if (!validate(request, 20)) {
             ioService.send(out, SERVER_SYNTAX_ERROR);
@@ -66,7 +73,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         return true;
     }
 
-    private boolean parseKey(Client client, BufferedWriter out, String request) throws IOException {
+    private boolean parseKey(Client client, BufferedWriter out, String request)
+            throws IOException, NumberFormatException {
         logger.log("Key by port=" + client.getPort() + ":\t" + request);
         if (!validate(request, 5)) {
             ioService.send(out, SERVER_SYNTAX_ERROR);
@@ -88,7 +96,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         return true;
     }
 
-    private boolean parseHash(Client client, BufferedWriter out, String request) throws IOException {
+    private boolean parseHash(Client client, BufferedWriter out, String request)
+            throws IOException, NumberFormatException {
         logger.log("Client's hash by port=" + client.getPort() + ":\t" + request);
         if (!validate(request, 7)) {
             ioService.send(out, SERVER_SYNTAX_ERROR);

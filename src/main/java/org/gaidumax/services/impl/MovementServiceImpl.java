@@ -7,8 +7,9 @@ import org.gaidumax.utils.Logger;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-import static org.gaidumax.sockets.ServerCommands.SERVER_LOGIC_ERROR;
 import static org.gaidumax.sockets.ServerCommands.SERVER_MOVE;
 import static org.gaidumax.sockets.ServerCommands.SERVER_SYNTAX_ERROR;
 
@@ -39,16 +40,16 @@ public class MovementServiceImpl implements MovementService {
     }
 
     private Pair parseCoordinates(String request) {
-        String[] words = request.split(" ");
-        if (words.length != 3 || !words[0].equals("OK")) {
+        Pattern pattern = Pattern.compile("OK (-?\\d+) (-?\\d+)");
+        Matcher matcher = pattern.matcher(request);
+        if (!matcher.matches()) {
             return null;
         }
         int x, y;
         try {
-            x = Integer.parseInt(words[1]);
-            y = Integer.parseInt(words[2]);
+            x = Integer.parseInt(matcher.group(1));
+            y = Integer.parseInt(matcher.group(2));
         } catch (NumberFormatException e) {
-            e.printStackTrace();
             return null;
         }
         return new Pair(x, y);

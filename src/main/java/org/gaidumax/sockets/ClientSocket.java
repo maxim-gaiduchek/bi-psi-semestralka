@@ -52,7 +52,7 @@ public class ClientSocket extends Thread {
             while (socket.isConnected()) {
                 String request = ioService.read(in);
                 if (rechargingService.isRechargingCommand(request)) {
-                    if (rechargingService.recharge(in, out)) {
+                    if (rechargingService.recharge(in, out, socket, TIMEOUT)) {
                         continue;
                     } else {
                         break;

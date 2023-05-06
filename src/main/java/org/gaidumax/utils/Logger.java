@@ -8,7 +8,7 @@ public class Logger {
 
     private static final boolean TURN_ON = true;
     private static final int TITLE_LENGTH = 12;
-    private static final DateFormat FORMAT = new SimpleDateFormat("<HH:mm:ss.SSSS>");
+    private static final DateFormat FORMAT = new SimpleDateFormat("<HH:mm:ss.SSS>");
     private final String title;
 
     public Logger(String title) {
