@@ -2,7 +2,7 @@ package org.gaidumax.sockets;
 
 import org.gaidumax.model.Client;
 import org.gaidumax.services.interfaces.ClientStorageService;
-import utils.Logger;
+import org.gaidumax.utils.Logger;
 
 import java.io.IOException;
 import java.net.ServerSocket;

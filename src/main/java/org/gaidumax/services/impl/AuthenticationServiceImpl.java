@@ -4,7 +4,8 @@ import org.gaidumax.model.Client;
 import org.gaidumax.model.ClientAuthStatus;
 import org.gaidumax.services.interfaces.AuthenticationService;
 import org.gaidumax.services.interfaces.IOService;
-import utils.Logger;
+import org.gaidumax.services.interfaces.MovementService;
+import org.gaidumax.utils.Logger;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -16,7 +17,6 @@ import static org.gaidumax.sockets.ServerCommands.SERVER_KEY_OUT_OF_RANGE_ERROR;
 import static org.gaidumax.sockets.ServerCommands.SERVER_KEY_REQUEST;
 import static org.gaidumax.sockets.ServerCommands.SERVER_LOGIC_ERROR;
 import static org.gaidumax.sockets.ServerCommands.SERVER_LOGIN_FAILED;
-import static org.gaidumax.sockets.ServerCommands.SERVER_MOVE;
 import static org.gaidumax.sockets.ServerCommands.SERVER_OK;
 import static org.gaidumax.sockets.ServerCommands.SERVER_SYNTAX_ERROR;
 
@@ -25,22 +25,23 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final Logger logger = new Logger("AuthService");
 
     private final IOService ioService = new IOServiceImpl();
+    private final MovementService movementService = new MovementServiceImpl();
 
     @Override
     public boolean authenticate(Client client, BufferedWriter out, String request) throws IOException {
         switch (client.getAuthStatus()) {
             case IS_SENDING_USERNAME -> {
-                if (parseUsername(client, out, request)) {
+                if (!parseUsername(client, out, request)) {
                     return false;
                 }
             }
             case IS_SENDING_KEY -> {
-                if (parseKey(client, out, request)) {
+                if (!parseKey(client, out, request)) {
                     return false;
                 }
             }
             case IS_SENDING_HASH -> {
-                if (parseHash(client, out, request)) {
+                if (!parseHash(client, out, request)) {
                     return false;
                 }
             }
@@ -56,6 +57,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         logger.log("Username by port=" + client.getPort() + ":\t" + request);
         if (!validate(request, 20)) {
             ioService.send(out, SERVER_SYNTAX_ERROR);
+            logger.log("Username by port=" + client.getPort() + " is invalid");
             return false;
         }
         client.setUsername(request);
@@ -68,11 +70,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         logger.log("Key by port=" + client.getPort() + ":\t" + request);
         if (!validate(request, 5)) {
             ioService.send(out, SERVER_SYNTAX_ERROR);
+            logger.log("Key by port=" + client.getPort() + " is invalid");
             return false;
         }
         int key = Integer.parseInt(request);
-        if (key < 0 || SERVER_KEYS.size() < key) {
+        if (key < 0 || SERVER_KEYS.size() <= key) {
             ioService.send(out, SERVER_KEY_OUT_OF_RANGE_ERROR);
+            logger.log("Key by port=" + client.getPort() + " is out of range");
             return false;
         }
         int usernameHash = hash(client.getUsername());
@@ -85,9 +89,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     private boolean parseHash(Client client, BufferedWriter out, String request) throws IOException {
-        logger.log("Client hash by port=" + client.getPort() + ":\t" + request);
+        logger.log("Client's hash by port=" + client.getPort() + ":\t" + request);
         if (!validate(request, 7)) {
             ioService.send(out, SERVER_SYNTAX_ERROR);
+            logger.log("Client's hash by port=" + client.getPort() + " is invalid");
             return false;
         }
         int usernameHash = hash(client.getUsername());
@@ -99,9 +104,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         }
         ioService.send(out, SERVER_OK);
         logger.log("Client has been authenticated by port=" + client.getPort());
-        ioService.send(out, SERVER_MOVE);
-        logger.log("Client with port=" + client.getPort() + " moved: MOVE");
         client.setAuthStatus(ClientAuthStatus.AUTHENTICATED);
+        movementService.move(client, out);
         return true;
     }
 

@@ -3,11 +3,13 @@ package org.gaidumax.sockets;
 import org.gaidumax.model.Client;
 import org.gaidumax.services.impl.AuthenticationServiceImpl;
 import org.gaidumax.services.impl.IOServiceImpl;
+import org.gaidumax.services.impl.MovementServiceImpl;
 import org.gaidumax.services.impl.RechargingServiceImpl;
 import org.gaidumax.services.interfaces.AuthenticationService;
 import org.gaidumax.services.interfaces.IOService;
+import org.gaidumax.services.interfaces.MovementService;
 import org.gaidumax.services.interfaces.RechargingService;
-import utils.Logger;
+import org.gaidumax.utils.Logger;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -16,6 +18,9 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
+
+import static org.gaidumax.sockets.ServerCommands.SERVER_LOGOUT;
+import static org.gaidumax.sockets.ServerCommands.SERVER_PICK_UP;
 
 public class ClientSocket extends Thread {
 
@@ -29,8 +34,9 @@ public class ClientSocket extends Thread {
     private final BufferedWriter out;
 
     private final IOService ioService = new IOServiceImpl();
-    private final AuthenticationService authService = new AuthenticationServiceImpl();
     private final RechargingService rechargingService = new RechargingServiceImpl();
+    private final AuthenticationService authService = new AuthenticationServiceImpl();
+    private final MovementService movementService = new MovementServiceImpl();
 
     public ClientSocket(Client client, Socket socket) throws IOException {
         this.client = client;
@@ -59,6 +65,10 @@ public class ClientSocket extends Thread {
                         break;
                     }
                 }
+                if (movementService.makeNextMove(client, out, request)) {
+                    getSecretAndLogout();
+                    break;
+                }
             }
             logger.log("Connection has ended with port=" + client.getPort());
             closeAll();
@@ -67,8 +77,16 @@ public class ClientSocket extends Thread {
             closeAll();
         } catch (IOException e) {
             e.printStackTrace();
+            closeAll();
             throw new RuntimeException(e);
         }
+    }
+
+    private void getSecretAndLogout() throws IOException {
+        ioService.send(out, SERVER_PICK_UP);
+        String request = ioService.read(in);
+        logger.log("Client secret with port=" + client.getPort() + ":\t" + request);
+        ioService.send(out, SERVER_LOGOUT);
     }
 
     private void closeAll() {
