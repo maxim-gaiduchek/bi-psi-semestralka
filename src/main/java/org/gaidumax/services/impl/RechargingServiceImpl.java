@@ -28,7 +28,7 @@ public class RechargingServiceImpl implements RechargingService {
             throws IOException {
         socket.setSoTimeout(TIMEOUT_RECHARGING * 1000);
         long start = System.currentTimeMillis();
-        String request = ioService.read(in);
+        String request = ioService.read(in, 12);
         long finish = System.currentTimeMillis();
         if (!CLIENT_FULL_POWER.equals(request)) {
             ioService.send(out, SERVER_LOGIC_ERROR);

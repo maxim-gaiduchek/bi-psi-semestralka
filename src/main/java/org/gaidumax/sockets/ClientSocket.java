@@ -52,7 +52,7 @@ public class ClientSocket extends Thread {
     public void run() {
         try {
             while (socket.isConnected()) {
-                String request = ioService.read(in);
+                String request = ioService.read(in, client.getAuthStatus().getExpectedMaxLength());
                 if (rechargingService.isRechargingCommand(request)) {
                     if (rechargingService.recharge(in, out, socket, TIMEOUT)) {
                         continue;
@@ -86,7 +86,7 @@ public class ClientSocket extends Thread {
 
     private void getSecretAndLogout() throws IOException {
         ioService.send(out, SERVER_PICK_UP);
-        String request = ioService.read(in);
+        String request = ioService.read(in, 100);
         if (CLIENT_RECHARGING.equals(request)) {
             ioService.send(out, SERVER_LOGIC_ERROR);
             logger.log("Client secret error with port=" + client.getPort());

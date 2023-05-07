@@ -33,6 +33,11 @@ public class MovementServiceImpl implements MovementService {
 
     @Override
     public boolean makeNextMove(Client client, BufferedWriter out, String request) throws IOException {
+        if (request == null) {
+            ioService.send(out, SERVER_SYNTAX_ERROR);
+            logger.log("Client with port=" + client.getPort() + " has sent invalid request");
+            return false;
+        }
         Coordinates currXY = parseCoordinates(request);
         if (currXY == null) {
             ioService.send(out, SERVER_SYNTAX_ERROR);
