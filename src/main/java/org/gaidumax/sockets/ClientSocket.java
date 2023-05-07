@@ -19,6 +19,8 @@ import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 
+import static org.gaidumax.sockets.ClientCommands.CLIENT_RECHARGING;
+import static org.gaidumax.sockets.ServerCommands.SERVER_LOGIC_ERROR;
 import static org.gaidumax.sockets.ServerCommands.SERVER_LOGOUT;
 import static org.gaidumax.sockets.ServerCommands.SERVER_PICK_UP;
 
@@ -85,6 +87,11 @@ public class ClientSocket extends Thread {
     private void getSecretAndLogout() throws IOException {
         ioService.send(out, SERVER_PICK_UP);
         String request = ioService.read(in);
+        if (CLIENT_RECHARGING.equals(request)) {
+            ioService.send(out, SERVER_LOGIC_ERROR);
+            logger.log("Client secret error with port=" + client.getPort());
+            return;
+        }
         logger.log("Client secret with port=" + client.getPort() + ":\t" + request);
         ioService.send(out, SERVER_LOGOUT);
     }

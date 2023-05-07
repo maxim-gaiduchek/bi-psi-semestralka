@@ -8,6 +8,8 @@ public class Client {
     private String username;
     private ClientAuthStatus authStatus = ClientAuthStatus.IS_SENDING_USERNAME;
     private int authKey = -1;
+    private Coordinates coordinates, rotation;
+    private ClientMove lastMove;
 
     public Client(int port) {
         this.port = port;
@@ -35,6 +37,18 @@ public class Client {
         return authKey;
     }
 
+    public Coordinates getCoordinates() {
+        return coordinates;
+    }
+
+    public Coordinates getRotation() {
+        return rotation;
+    }
+
+    public ClientMove getLastMove() {
+        return lastMove;
+    }
+
     // setters
 
     public void setUsername(String username) {
@@ -47,6 +61,18 @@ public class Client {
 
     public void setAuthKey(int authKey) {
         this.authKey = authKey;
+    }
+
+    public void setCoordinates(Coordinates coordinates) {
+        this.coordinates = coordinates;
+    }
+
+    public void setRotation(Coordinates rotation) {
+        this.rotation = rotation;
+    }
+
+    public void setLastMove(ClientMove lastMove) {
+        this.lastMove = lastMove;
     }
 
     // data
@@ -73,6 +99,7 @@ public class Client {
                 ", username='" + username + '\'' +
                 ", authStatus=" + authStatus +
                 ", authKey=" + authKey +
+                ", coordinates=" + coordinates +
                 '}';
     }
 }
