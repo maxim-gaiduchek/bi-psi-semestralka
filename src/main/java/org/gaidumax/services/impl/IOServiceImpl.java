@@ -11,11 +11,6 @@ import static org.gaidumax.sockets.ServerCommands.END;
 public class IOServiceImpl implements IOService {
 
     @Override
-    public String read(BufferedReader in) throws IOException {
-        return read(in, -1);
-    }
-
-    @Override
     public String read(BufferedReader in, int expectedMaxLength) throws IOException {
         StringBuilder sb = new StringBuilder();
         while (!isEnding(sb)) {

@@ -192,6 +192,7 @@ public class MovementServiceImpl implements MovementService {
     }
 
     private boolean haveSimilarDirection(Coordinates first, Coordinates second) {
-        return first.x() == second.x() || first.y() == second.y();
+        return first.isHorizontal() && second.isHorizontal() && first.x() == second.x() ||
+                first.isVertical() && second.isVertical() && first.y() == second.y();
     }
 }

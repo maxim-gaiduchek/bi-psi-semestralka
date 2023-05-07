@@ -23,6 +23,7 @@ import static org.gaidumax.sockets.ClientCommands.CLIENT_RECHARGING;
 import static org.gaidumax.sockets.ServerCommands.SERVER_LOGIC_ERROR;
 import static org.gaidumax.sockets.ServerCommands.SERVER_LOGOUT;
 import static org.gaidumax.sockets.ServerCommands.SERVER_PICK_UP;
+import static org.gaidumax.sockets.ServerCommands.SERVER_SYNTAX_ERROR;
 
 public class ClientSocket extends Thread {
 
@@ -87,9 +88,14 @@ public class ClientSocket extends Thread {
     private void getSecretAndLogout() throws IOException {
         ioService.send(out, SERVER_PICK_UP);
         String request = ioService.read(in, 100);
+        if (request == null) {
+            ioService.send(out, SERVER_SYNTAX_ERROR);
+            logger.log("Client secret with port=" + client.getPort() + " is out of range");
+            return;
+        }
         if (CLIENT_RECHARGING.equals(request)) {
             ioService.send(out, SERVER_LOGIC_ERROR);
-            logger.log("Client secret error with port=" + client.getPort());
+            logger.log("Client secret with port=" + client.getPort() + " is invalid");
             return;
         }
         logger.log("Client secret with port=" + client.getPort() + ":\t" + request);
